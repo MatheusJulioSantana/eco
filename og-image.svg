@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#181c18"/>
+  <rect x="42" y="42" width="1116" height="546" fill="#1d221d" stroke="#344d28" stroke-width="4"/>
+  <rect x="74" y="78" width="1052" height="64" fill="#1c2a16" stroke="#344d28" stroke-width="2"/>
+  <text x="100" y="119" fill="#8aab72" font-family="DejaVu Sans Mono, Courier New, monospace" font-size="24">eco-runtime v2.1 / backend live</text>
+  <circle cx="1086" cy="110" r="8" fill="#8aab72"/>
+
+  <g opacity="0.28" stroke="#344d28" stroke-width="1">
+    <path d="M74 188H1126"/>
+    <path d="M74 238H1126"/>
+    <path d="M74 288H1126"/>
+    <path d="M74 338H1126"/>
+    <path d="M74 388H1126"/>
+    <path d="M74 438H1126"/>
+    <path d="M74 488H1126"/>
+    <path d="M174 166V538"/>
+    <path d="M274 166V538"/>
+    <path d="M374 166V538"/>
+    <path d="M474 166V538"/>
+    <path d="M574 166V538"/>
+    <path d="M674 166V538"/>
+    <path d="M774 166V538"/>
+    <path d="M874 166V538"/>
+    <path d="M974 166V538"/>
+    <path d="M1074 166V538"/>
+  </g>
+
+  <text x="96" y="230" fill="#c2d4a8" font-family="DejaVu Sans Mono, Courier New, monospace" font-size="72" font-weight="700">Matheus Julio</text>
+  <rect x="100" y="258" width="444" height="4" fill="#587a44"/>
+  <text x="100" y="310" fill="#b4c49c" font-family="DejaVu Sans Mono, Courier New, monospace" font-size="34">Backend Engineer - Go, payments</text>
+  <text x="100" y="354" fill="#b4c49c" font-family="DejaVu Sans Mono, Courier New, monospace" font-size="34">and reliable services</text>
+
+  <g font-family="DejaVu Sans Mono, Courier New, monospace">
+    <rect x="100" y="404" width="256" height="72" fill="#242924" stroke="#344d28" stroke-width="2"/>
+    <text x="122" y="432" fill="#587a44" font-size="16">LIVE METRICS</text>
+    <text x="122" y="461" fill="#8aab72" font-size="24">cache / p50 / CO2</text>
+
+    <rect x="384" y="404" width="250" height="72" fill="#242924" stroke="#344d28" stroke-width="2"/>
+    <text x="406" y="432" fill="#587a44" font-size="16">STACK</text>
+    <text x="406" y="461" fill="#8aab72" font-size="24">Go + Fly.io</text>
+
+    <rect x="662" y="404" width="288" height="72" fill="#242924" stroke="#344d28" stroke-width="2"/>
+    <text x="684" y="432" fill="#587a44" font-size="16">LIB</text>
+    <text x="684" y="461" fill="#8aab72" font-size="24">green-stack-monitor</text>
+  </g>
+
+  <text x="100" y="545" fill="#8aab72" font-family="DejaVu Sans Mono, Courier New, monospace" font-size="22">matheusj.fly.dev</text>
+  <text x="746" y="545" fill="#c4b47a" font-family="DejaVu Sans Mono, Courier New, monospace" font-size="18">79KB / 6 req / low-cost deploy</text>
+</svg>

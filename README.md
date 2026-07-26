@@ -3,7 +3,7 @@
 > Backend Engineer portfolio built as a small live system.  
 > Go backend · real metrics · low-cost deploy path
 
-**[matheusjuliosantana.fly.dev](https://matheusjuliosantana.fly.dev)** · [LinkedIn](https://linkedin.com/in/matheusjuliosantana) · [matheus.jsant@gmail.com](mailto:matheus.jsant@gmail.com)
+**[matheusj.fly.dev](https://matheusj.fly.dev)** · [LinkedIn](https://linkedin.com/in/matheusjuliosantana) · [matheus.jsant@gmail.com](mailto:matheus.jsant@gmail.com)
 
 ## What It Is
 
@@ -70,7 +70,7 @@ Open `http://localhost:8080`.
 ### `GET /eco`
 
 ```bash
-curl https://matheusjuliosantana.fly.dev/eco
+curl https://matheusj.fly.dev/eco
 ```
 
 ```json

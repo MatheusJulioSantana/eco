@@ -18,6 +18,7 @@ WORKDIR /app
 
 COPY --from=builder /app/server .
 COPY portfolio.html .
+COPY og-image.png .
 
 RUN chown -R app:app /app
 USER app
