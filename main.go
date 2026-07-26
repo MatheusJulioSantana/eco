@@ -586,11 +586,13 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.Handle("/og-image.png", chain(24*time.Hour, func(w http.ResponseWriter, r *http.Request) {
+	ogImageHandler := func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		http.ServeFile(w, r, "og-image.png")
-	}))
+	}
+	mux.Handle("/og-image.png", chain(24*time.Hour, ogImageHandler))
+	mux.Handle("/og-image-f09785a.png", chain(24*time.Hour, ogImageHandler))
 
 	mux.Handle("/", chain(5*time.Minute, func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
