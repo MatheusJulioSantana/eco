@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Backend Engineer focused on Go, financial systems and reliable services">
+<meta property="og:title" content="MatheusJ — backend engineer">
+<meta property="og:description" content="backend engineer · payments · eco-runtime">
+<meta property="og:type" content="website">
+<title>MatheusJ — backend engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Courier+Prime:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:       #181c18;
+  --surface:  #1d221d;
+  --surface2: #242924;
+  --lcd-0:    #c2d4a8;
+  --lcd-1:    #8aab72;
+  --lcd-2:    #587a44;
+  --lcd-3:    #344d28;
+  --lcd-4:    #1c2a16;
+  --warm:     #c4b47a;
+  --warm-dim: #685e38;
+  --warm-ghost:#2a2614;
+  --body-text: #b4c49c;
+  --dim-text:  #4a5e3c;
+  --mono: 'Courier Prime','Courier New',monospace;
+  --pixel:'VT323',monospace;
+  --tiny: 'Press Start 2P',monospace;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--lcd-1);
+  font-family:var(--mono);font-size:14px;line-height:1.75;
+  min-height:100vh;position:relative;overflow-x:hidden;
+}
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background-image:repeating-linear-gradient(0deg,
+    transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 3px);
+}
+.grain{
+  position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:.018;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:180px 180px;
+}
+
+body.eco-mode .grain,body.eco-mode .grid-bg{display:none}
+body.eco-mode *{animation:none!important;transition:none!important;box-shadow:none!important}
+body.eco-mode .cursor{opacity:1}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--lcd-3)}
+::-webkit-scrollbar-thumb:hover{background:var(--lcd-2)}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .cursor{opacity:1;animation:none}
+}
+
+nav{
+  position:sticky;top:0;background:rgba(24,28,24,.97);
+  border-bottom:2px solid var(--lcd-3);
+  padding:.6rem 2rem;
+  display:flex;align-items:center;justify-content:space-between;gap:1.5rem;
+  z-index:200;
+}
+.nav-brand{
+  font-family:var(--pixel);font-size:1.5rem;
+  color:var(--lcd-1);letter-spacing:.06em;white-space:nowrap;
+}
+.nav-brand .ver{
+  font-family:var(--mono);font-size:9px;color:var(--dim-text);
+  letter-spacing:.12em;display:block;margin-top:.1rem;
+}
+.nav-links{display:flex;gap:0}
+.nav-links a{
+  color:var(--lcd-2);text-decoration:none;
+  padding:.3rem 0;border:1px solid transparent;
+  font-size:11px;letter-spacing:.06em;transition:all .1s;
+  min-width:80px;text-align:center;
+}
+.nav-links a:hover,.nav-links a.active{
+  color:var(--lcd-0);background:var(--lcd-4);border-color:var(--lcd-3);
+}
+.nav-right{display:flex;align-items:center;gap:.75rem;min-width:310px;justify-content:flex-end}
+.nav-btn{
+  font-family:var(--mono);font-size:9px;padding:.3rem .7rem;
+  border:1px solid var(--lcd-3);background:transparent;color:var(--dim-text);
+  cursor:pointer;letter-spacing:.1em;transition:all .1s;white-space:nowrap;
+}
+.nav-btn:hover{color:var(--lcd-1);border-color:var(--lcd-2)}
+body.eco-mode #eco-toggle{color:var(--warm);border-color:var(--warm-dim);background:var(--warm-ghost)}
+.lang-active{color:var(--lcd-1)!important;border-color:var(--lcd-2)!important}
+.sys-status{display:flex;align-items:center;gap:.4rem;font-size:9px;color:var(--dim-text);letter-spacing:.1em;min-width:140px;justify-content:flex-end}
+.pulse{width:5px;height:5px;background:var(--lcd-2);animation:blink 3s infinite}
+@keyframes blink{0%,85%,100%{opacity:1}90%{opacity:.2}}
+
+#hero{
+  min-height:100vh;padding:3.5rem 2rem 5rem;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.grid-bg{
+  position:absolute;inset:0;opacity:.5;
+  background-image:
+    linear-gradient(var(--lcd-4) 1px,transparent 1px),
+    linear-gradient(90deg,var(--lcd-4) 1px,transparent 1px);
+  background-size:44px 44px;
+}
+.hero-content{position:relative;z-index:1;max-width:900px}
+#boot{font-size:11px;color:var(--dim-text);min-height:9rem;margin-bottom:3rem;letter-spacing:.05em}
+.bl{display:block;opacity:0;transition:opacity .18s}
+.bl.show{opacity:1}
+.bl-ok{color:var(--lcd-2)}.bl-dim{color:var(--dim-text)}.bl-rdy{color:var(--lcd-1)}
+
+.hero-name{
+  font-family:var(--tiny);
+  font-size:clamp(1.5rem,4.2vw,3.2rem);
+  line-height:1.4;color:var(--lcd-0);
+  letter-spacing:.04em;margin-bottom:1.75rem;word-break:break-word;
+}
+.hero-rule{height:2px;max-width:460px;background:var(--lcd-3);margin-bottom:1.25rem}
+.hero-tagline{
+  font-size:14px;color:var(--body-text);
+  border-left:2px solid var(--lcd-2);padding-left:1rem;margin-bottom:.4rem;
+}
+.hero-sub{font-size:11px;color:var(--dim-text);padding-left:calc(1rem + 2px);margin-bottom:2.75rem;letter-spacing:.06em}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
+.btn{
+  font-family:var(--mono);font-size:11px;padding:.5rem 1.4rem;
+  border:2px solid var(--lcd-2);box-shadow:3px 3px 0 var(--lcd-4);
+  background:transparent;color:var(--lcd-1);
+  cursor:pointer;letter-spacing:.1em;text-decoration:none;
+  transition:all .07s;display:inline-block;
+}
+.btn:hover{background:var(--lcd-3);color:var(--lcd-0);box-shadow:1px 1px 0 var(--lcd-4);transform:translate(2px,2px)}
+.btn-soft{border-color:var(--lcd-3);color:var(--lcd-2);box-shadow:3px 3px 0 var(--lcd-4)}
+.btn-soft:hover{border-color:var(--lcd-2);color:var(--lcd-1)}
+.btn-warm{border-color:var(--warm-dim);color:var(--warm);box-shadow:3px 3px 0 var(--warm-ghost)}
+.btn-warm:hover{background:var(--warm-ghost);color:var(--warm)}
+.cursor{
+  display:inline-block;width:.55em;height:.9em;background:var(--lcd-1);
+  animation:cur 1.2s infinite step-start;vertical-align:text-bottom;margin-left:2px;
+}
+@keyframes cur{0%,49%{opacity:1}50%,100%{opacity:0}}
+.hc{position:absolute;font-size:9px;color:var(--dim-text);letter-spacing:.1em;line-height:1.7}
+.hc.tl{top:1.2rem;left:2rem}.hc.tr{top:1.2rem;right:2rem;text-align:right}
+.hc.bl{bottom:2rem;left:2rem}.hc.br{bottom:2rem;right:2rem;text-align:right}
+
+#metrics{background:var(--surface);border-top:2px solid var(--lcd-3);border-bottom:2px solid var(--lcd-3)}
+.met-hdr{
+  background:var(--lcd-4);border-bottom:1px solid var(--lcd-3);
+  padding:.45rem 2rem;font-size:9px;color:var(--dim-text);letter-spacing:.2em;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.met-hdr-r{display:flex;gap:1rem;align-items:center}
+.met-mode{font-size:8px;color:var(--dim-text);letter-spacing:.12em;font-style:italic}
+.met-live{color:var(--lcd-2)}
+.met-grid{display:grid;grid-template-columns:repeat(5,1fr)}
+.met{padding:1.3rem 1.4rem;border-right:1px solid var(--lcd-4);position:relative}
+.met:last-child{border-right:none}
+.met-lbl{font-size:9px;color:var(--dim-text);letter-spacing:.18em;margin-bottom:.5rem}
+.met-lbl span{color:var(--lcd-3)}
+.met-val{font-family:var(--pixel);font-size:2.8rem;color:var(--lcd-1);line-height:1}
+.met-unit{font-size:9px;color:var(--lcd-2);margin-top:.2rem}
+.pxbar{font-family:var(--pixel);font-size:.75rem;color:var(--lcd-3);letter-spacing:-.05em;margin-top:.6rem;line-height:1}
+
+section{padding:4.5rem 2rem}
+.sec-label{font-size:9px;color:var(--dim-text);letter-spacing:.25em;margin-bottom:.5rem;display:block}
+.sec-label::before{content:'$ ';color:var(--dim-text)}
+.sec-title{font-family:var(--pixel);font-size:clamp(1.4rem,3vw,2.3rem);color:var(--lcd-1);letter-spacing:.04em;margin-bottom:3rem;line-height:1.2}
+.sep{height:5px;margin:0 -2rem;background-image:repeating-linear-gradient(90deg,var(--lcd-3) 0,var(--lcd-3) 1px,var(--lcd-4) 1px,var(--lcd-4) 3px,transparent 3px,transparent 5px);opacity:.5}
+.panel{border:2px solid var(--lcd-3);background:var(--bg);box-shadow:4px 4px 0 var(--lcd-4)}
+.panel-hdr{background:var(--lcd-4);border-bottom:1px solid var(--lcd-3);padding:.45rem 1.1rem;font-size:9px;color:var(--dim-text);letter-spacing:.15em;display:flex;align-items:center;gap:.6rem}
+.panel-sq{width:6px;height:6px;background:var(--lcd-3);display:inline-block}
+.panel-body{padding:1.5rem}
+
+#about{background:var(--surface)}
+.t-p{color:var(--dim-text);font-size:11px;margin-bottom:.2rem}
+.t-p::before{content:'▶ '}
+.t-o{color:var(--body-text);padding-left:1rem;font-size:13px;line-height:1.9;margin-bottom:1rem}
+.t-o:last-child{margin-bottom:0}
+.cl1{color:var(--lcd-1)}.cw{color:var(--warm)}.cd{color:var(--dim-text)}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;padding-left:1rem;margin-bottom:1rem}
+.chip{font-size:9px;padding:.2rem .6rem;border:1px solid var(--lcd-3);color:var(--lcd-2);letter-spacing:.08em}
+
+#projects{background:var(--bg)}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));border:2px solid var(--lcd-3);box-shadow:4px 4px 0 var(--lcd-4)}
+.proj{border:1px solid var(--lcd-4);padding:1.75rem;position:relative;cursor:pointer;transition:background .1s}
+.proj:hover{background:var(--lcd-4)}
+.proj-n{font-family:var(--pixel);font-size:4rem;color:var(--lcd-4);position:absolute;top:.75rem;right:1.25rem;line-height:1;transition:color .1s}
+.proj:hover .proj-n{color:var(--lcd-3)}
+.proj-st{font-size:9px;letter-spacing:.18em;margin-bottom:.75rem}
+.proj-st.active{color:var(--lcd-1)}.proj-st.active::before{content:'● ';color:var(--lcd-2)}
+.proj-st.live{color:var(--lcd-1)}.proj-st.live::before{content:'● ';color:var(--lcd-2)}
+.proj-st.progress{color:var(--warm)}.proj-st.progress::before{content:'◌ ';color:var(--warm)}
+.proj-name{font-family:var(--pixel);font-size:.9rem;color:var(--lcd-1);margin-bottom:.75rem;line-height:1.6}
+.proj-desc{font-size:12px;color:var(--body-text);line-height:1.8;margin-bottom:1.25rem}
+.tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:1.1rem}
+.tag{font-size:9px;padding:.15rem .5rem;border:1px solid var(--lcd-3);color:var(--dim-text);letter-spacing:.06em}
+.tag.eco{border-color:var(--warm-dim);color:var(--warm-dim)}
+.plinks{display:flex;gap:.75rem}
+.plink{font-size:10px;color:var(--lcd-2);text-decoration:none;letter-spacing:.1em;transition:color .1s}
+.plink::before{content:'['}.plink::after{content:']'}
+.plink:hover{color:var(--lcd-0)}
+
+#knowledge{background:var(--surface)}
+.tabs-nav{display:flex;gap:0;border:2px solid var(--lcd-3);border-bottom:none;width:fit-content}
+.tab-btn{font-family:var(--mono);font-size:10px;padding:.5rem 1.2rem;border:none;border-right:1px solid var(--lcd-3);background:var(--lcd-4);color:var(--dim-text);cursor:pointer;letter-spacing:.1em;transition:all .1s}
+.tab-btn:last-child{border-right:none}
+.tab-btn.active{background:var(--surface);color:var(--lcd-1)}
+.tab-btn:hover:not(.active){background:var(--lcd-4);color:var(--lcd-2)}
+.tab-panels{border:2px solid var(--lcd-3);box-shadow:4px 4px 0 var(--lcd-4)}
+.tab-panel{display:none;padding:2rem}
+.tab-panel.active{display:block}
+
+.stack-grid{display:grid;grid-template-columns:repeat(6,1fr);border:1px solid var(--lcd-3)}
+.stk-col{border-right:1px solid var(--lcd-3);padding:1.25rem}
+.stk-col:last-child{border-right:none}
+.stk-cat{font-size:9px;color:var(--dim-text);letter-spacing:.18em;border-bottom:1px solid var(--lcd-4);padding-bottom:.5rem;margin-bottom:1rem}
+.si{display:flex;align-items:center;gap:.4rem;padding:.28rem 0;font-size:11px;color:var(--body-text);border-bottom:1px solid var(--lcd-4)}
+.si:last-child{border-bottom:none}
+.si::before{content:'▸';color:var(--lcd-3);font-size:9px;flex-shrink:0}
+.si .lvl{margin-left:auto;font-size:9px;color:var(--dim-text)}
+
+.concepts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--lcd-3)}
+.concept{background:var(--surface2);padding:1.5rem;border-left:2px solid transparent;transition:background .12s,border-left-color .12s}
+.concept:hover{background:var(--surface);border-left-color:var(--lcd-2)}
+.concept-icon{font-family:var(--pixel);font-size:2rem;color:var(--lcd-3);margin-bottom:.6rem;line-height:1}
+.concept-title{font-size:12px;color:var(--lcd-1);letter-spacing:.08em;margin-bottom:.5rem}
+.concept-desc{font-size:11px;color:var(--body-text);line-height:1.9}
+.concept-stat{margin-top:.75rem;font-size:9px;color:var(--warm);letter-spacing:.1em}
+.concept-stat::before{content:'↳ '}
+.concept-src{margin-top:.4rem;font-size:9px;color:var(--dim-text);letter-spacing:.08em}
+.concept-src a{color:var(--dim-text);text-decoration:none;border-bottom:1px solid var(--lcd-3)}
+.concept-src a:hover{color:var(--lcd-2)}
+
+.arch-code{border:1px solid var(--lcd-3);padding:1.25rem;font-size:11px;color:var(--body-text);line-height:2.1}
+.ln{color:var(--dim-text)}.lk{color:var(--lcd-1)}.lg{color:var(--lcd-2)}.lr{color:var(--warm)}
+
+.refs-list{display:flex;flex-direction:column;gap:1.25rem}
+.ref-item{border-left:2px solid var(--lcd-3);padding-left:1.25rem}
+.ref-source{font-size:11px;color:var(--lcd-1);letter-spacing:.06em;margin-bottom:.25rem}
+.ref-desc{font-size:11px;color:var(--body-text);line-height:1.8}
+.ref-link{display:inline-block;margin-top:.3rem;font-size:9px;color:var(--lcd-2);text-decoration:none;letter-spacing:.1em;border-bottom:1px solid var(--lcd-3)}
+.ref-link:hover{color:var(--lcd-1)}
+.ref-note{margin-top:2rem;padding:1rem 1.25rem;border:1px solid var(--lcd-3);font-size:11px;color:var(--dim-text);line-height:1.8}
+
+#eco{background:var(--bg)}
+
+.dex-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1px;background:var(--lcd-3);margin-bottom:2.5rem}
+.dex-card{background:var(--surface2);padding:1.1rem .9rem;text-align:center;transition:background .1s}
+.dex-card:hover{background:var(--surface)}
+.dex-card:hover .dex-val{color:var(--lcd-0)}
+.dex-label{font-size:8px;color:var(--dim-text);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.4rem}
+.dex-val{font-family:var(--pixel);font-size:1.7rem;color:var(--lcd-1);line-height:1;margin-bottom:.25rem;transition:color .1s}
+.dex-sub{font-size:8px;color:var(--lcd-3);letter-spacing:.1em}
+.dex-badge{display:inline-block;font-size:8px;padding:.15rem .45rem;border:1px solid var(--lcd-2);color:var(--lcd-2);letter-spacing:.12em;text-transform:uppercase;margin-top:.35rem}
+.dex-badge.a{border-color:var(--lcd-1);color:var(--lcd-1)}
+
+.eco-layout{display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
+.eco-row{display:flex;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--lcd-4);font-size:12px}
+.eco-row:last-child{border-bottom:none}
+.eco-k{color:var(--dim-text)}
+.eco-bad{color:var(--warm);opacity:.75}
+.eco-gd{color:var(--lcd-1)}
+.eco-ref{font-size:9px;color:var(--lcd-3);margin-left:.3rem;cursor:default}
+.eco-ref:hover{color:var(--lcd-2)}
+.pxbar-full{font-family:var(--pixel);font-size:.8rem;letter-spacing:-.06em;color:var(--lcd-3);margin-top:.2rem;line-height:1}
+
+.notes-card{border:1px solid var(--lcd-3);padding:1rem 1.25rem;font-size:11px;color:var(--dim-text);line-height:1.9;margin-top:1.5rem}
+.notes-card a{color:var(--lcd-2);text-decoration:none;border-bottom:1px solid var(--lcd-3)}
+.notes-card a:hover{color:var(--lcd-1)}
+
+.manifesto{border:2px solid var(--lcd-3);box-shadow:4px 4px 0 var(--lcd-4)}
+.manifesto-title{font-family:var(--pixel);font-size:.9rem;color:var(--lcd-1);background:var(--lcd-4);border-bottom:1px solid var(--lcd-3);padding:.75rem 1.25rem;letter-spacing:.06em}
+.m-line{display:flex;gap:.75rem;padding:.4rem 1.25rem;border-bottom:1px solid var(--lcd-4);font-size:11px}
+.m-line:last-child{border-bottom:none}
+.m-n{color:var(--lcd-3);flex-shrink:0;padding-top:.12rem;font-size:10px}
+.m-t{color:var(--body-text)}
+
+#contact{background:var(--surface);min-height:50vh;display:flex;flex-direction:column;justify-content:center}
+.ct-win{max-width:560px;border:2px solid var(--lcd-3);box-shadow:4px 4px 0 var(--lcd-4)}
+.ct-hdr{background:var(--lcd-4);border-bottom:1px solid var(--lcd-3);padding:.5rem 1.1rem;font-size:9px;color:var(--dim-text);letter-spacing:.15em;display:flex;justify-content:space-between}
+.ct-body{padding:1.25rem}
+.ct-link{display:flex;align-items:center;gap:.75rem;color:var(--lcd-2);text-decoration:none;font-size:12px;transition:color .1s;padding:.45rem 0;border-bottom:1px solid var(--lcd-4)}
+.ct-link:last-child{border-bottom:none}
+.ct-link:hover{color:var(--lcd-1)}
+.ct-key{color:var(--dim-text);min-width:95px;font-size:10px}
+.ct-val{color:var(--body-text)}
+.ct-arr{margin-left:auto;color:var(--lcd-4);font-size:10px}
+.ct-link:hover .ct-arr{color:var(--lcd-3)}
+.ct-repl{display:flex;align-items:center;gap:.5rem;padding:1.1rem 1.25rem;border-top:1px solid var(--lcd-4)}
+.ct-in{background:transparent;border:none;outline:none;color:var(--lcd-1);font-family:var(--mono);font-size:12px;flex:1;caret-color:var(--lcd-1)}
+.ct-in::placeholder{color:var(--dim-text)}
+#repl-out{padding:0 1.25rem .75rem;font-size:11px;color:var(--lcd-2);line-height:2}
+
+footer{
+  background:var(--bg);border-top:2px solid var(--lcd-4);
+  padding:1.25rem 2rem;
+  display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.5rem;
+  font-size:9px;color:var(--dim-text);letter-spacing:.1em;
+}
+footer a{color:var(--dim-text);text-decoration:none;border-bottom:1px solid var(--lcd-3);transition:color .1s}
+footer a:hover{color:var(--lcd-1)}
+
+@media(max-width:1100px){
+  .stack-grid{grid-template-columns:repeat(3,1fr)}
+  .stk-col:nth-child(3n){border-right:none}
+  .concepts-grid{grid-template-columns:repeat(2,1fr)}
+  .dex-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:900px){
+  .met-grid{grid-template-columns:repeat(3,1fr)}
+  .met{border-right:1px solid var(--lcd-4)}
+  .met:nth-child(3n){border-right:none}
+  .eco-layout{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .dex-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  nav{padding:.6rem 1rem;gap:.75rem}
+  .nav-right{min-width:0;gap:.5rem}
+  .sys-status{display:none}
+  .nav-btn{font-size:8px;padding:.25rem .5rem;letter-spacing:.06em}
+  .nav-brand{font-size:1.2rem}
+  .nav-brand .ver{display:none}
+
+  #hero{padding:2.5rem 1rem 3.5rem}
+  .hero-name{font-size:1.2rem}
+  .hc.tr,.hc.bl,.hc.br{display:none}
+  .hc.tl{font-size:8px;top:.75rem;left:1rem}
+  #boot{font-size:10px;min-height:6rem;margin-bottom:2rem;letter-spacing:.03em}
+  .hero-tagline{font-size:12px}
+  .hero-sub{font-size:10px;margin-bottom:2rem}
+  .hero-rule{max-width:100%}
+
+  section{padding:3rem 1rem}
+
+  .met-grid{grid-template-columns:repeat(2,1fr)}
+  .met{border-right:1px solid var(--lcd-4)}
+  .met:nth-child(2n){border-right:none}
+
+  .tabs-nav{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tab-btn{white-space:nowrap;font-size:9px;padding:.4rem .75rem}
+
+  #tab-arch > div{grid-template-columns:1fr !important}
+
+  .stack-grid{grid-template-columns:repeat(2,1fr)}
+  .stk-col{border-right:1px solid var(--lcd-3)}
+  .stk-col:nth-child(2n){border-right:none}
+
+  .concepts-grid{grid-template-columns:1fr}
+  .dex-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+  .panel{max-width:100%}
+  .ct-win{max-width:100%}
+  .ct-key{min-width:75px}
+}
+
+@media(max-width:400px){
+  .hero-name{font-size:1rem}
+  .met-grid{grid-template-columns:1fr}
+  .met{border-right:none !important}
+  .sec-title{font-size:1.2rem}
+  .hero-cta{flex-direction:column}
+  .btn{text-align:center}
+  .dex-grid{grid-template-columns:1fr}
+}
+
+.reveal{opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
+.revealed{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav>
+  <div class="nav-brand">
+    eco-runtime
+    <span class="ver">v2.1.0 · low impact · backend eng</span>
+  </div>
+  <div class="nav-links">
+    <a href="#about"     data-i18n="nav-about">about</a>
+    <a href="#projects"  data-i18n="nav-projects">work</a>
+    <a href="#knowledge" data-i18n="nav-concepts">stack</a>
+    <a href="#eco"       data-i18n="nav-eco">eco report</a>
+    <a href="#contact"   data-i18n="nav-contact">contato</a>
+  </div>
+  <div class="nav-right">
+    <button class="nav-btn" id="lang-pt" onclick="setLang('pt')">pt</button>
+    <button class="nav-btn" id="lang-en" onclick="setLang('en')">en</button>
+    <button class="nav-btn" id="eco-toggle" data-i18n="battery-btn">[ battery saver ]</button>
+    <div class="sys-status">
+      <span class="pulse"></span>
+      <span id="sys-text" data-i18n="sys-status">systems healthy</span>
+    </div>
+  </div>
+</nav>
+
+<section id="hero">
+  <div class="grid-bg"></div>
+  <div class="hc tl">eco-runtime · warm compute<br>low bandwidth · low impact</div>
+  <div class="hc tr">Brasil<br>build 2026.07</div>
+  <div class="hc bl">79KB · 6 req · 0.04g CO₂ <span data-i18n="hero-est">est.</span></div>
+  <div class="hc br">☀ thoughtful<br>☀ software</div>
+  <div class="hero-content">
+    <div id="boot" aria-live="polite"></div>
+    <div class="hero-name" id="hn" style="opacity:0;transition:opacity .7s">
+      Matheus<br>Julio<br>
+    </div>
+    <div class="hero-rule" id="hr" style="opacity:0;transition:opacity .5s .2s"></div>
+    <div class="hero-tagline" id="ht" style="opacity:0;transition:opacity .5s .35s" data-i18n="hero-tagline">
+      Backend Engineer — Go, payments and reliable services
+    </div>
+    <div class="hero-sub" id="hs" style="opacity:0;transition:opacity .5s .5s" data-i18n="hero-sub">
+      2+ years · acquiring · settlement · ISO 8583 · event-driven systems
+    </div>
+    <div class="hero-cta" id="hcta" style="opacity:0;transition:opacity .5s .65s">
+      <a href="#projects" class="btn" data-i18n="btn-projects">see work</a>
+      <a href="#knowledge" class="btn btn-soft" data-i18n="btn-concepts">stack</a>
+      <a href="#eco" class="btn btn-warm" data-i18n="btn-eco">eco report</a>
+    </div>
+  </div>
+</section>
+
+<div id="metrics" class="reveal">
+  <div class="met-hdr">
+    <span data-i18n="met-title">system · observatory · backend metrics</span>
+    <div class="met-hdr-r">
+      <span class="met-mode" id="met-mode" data-i18n="met-static">static mode — connect backend for live data</span>
+      <span class="met-live" id="mts">—</span>
+    </div>
+  </div>
+  <div class="met-grid">
+    <div class="met">
+      <div class="met-lbl">cache <span>·</span> hit</div>
+      <div class="met-val" id="m0">—</div>
+      <div class="met-unit" data-i18n="met0-unit">in-memory · hits / total req</div>
+      <div class="pxbar" id="pb0">░░░░░░░░░░</div>
+    </div>
+    <div class="met">
+      <div class="met-lbl">response <span>·</span> p50</div>
+      <div class="met-val" id="m1">—</div>
+      <div class="met-unit" data-i18n="met1-unit">ms · sliding 100 req</div>
+      <div class="pxbar" id="pb1">░░░░░░░░░░</div>
+    </div>
+    <div class="met">
+      <div class="met-lbl" data-i18n="met2-lbl">saved <span>·</span> today</div>
+      <div class="met-val" id="m2">—</div>
+      <div class="met-unit" data-i18n="met2-unit">cache hits · this session</div>
+      <div class="pxbar" id="pb2">░░░░░░░░░░</div>
+    </div>
+    <div class="met">
+      <div class="met-lbl">co₂ <span>·</span> p/req</div>
+      <div class="met-val" id="m3">—</div>
+      <div class="met-unit" data-i18n="met3-unit">g · green-stack-monitor</div>
+      <div class="pxbar" id="pb3">░░░░░░░░░░</div>
+    </div>
+    <div class="met">
+      <div class="met-lbl">uptime <span>·</span> hrs</div>
+      <div class="met-val" id="m4">—</div>
+      <div class="met-unit" data-i18n="met4-unit">hours online · this session</div>
+      <div class="pxbar" id="pb4">░░░░░░░░░░</div>
+    </div>
+  </div>
+</div>
+
+<section id="about">
+  <span class="sec-label" data-i18n="about-cmd">cat summary.txt</span>
+  <h2 class="sec-title" data-i18n="about-title">summary</h2>
+  <div class="panel reveal" style="max-width:720px">
+    <div class="panel-hdr"><span class="panel-sq"></span><span>portfolio · bash · 80×24</span></div>
+    <div class="panel-body">
+      <div class="t-p">whoami</div>
+      <div class="t-o" data-i18n="about-who">
+        Backend Engineer with 2+ years of professional experience working on
+        <span class="cl1">financial systems</span> with Go, PostgreSQL and cloud-native tools.
+        I have contributed to acquiring transaction authorization, settlement, clearing,
+        reconciliation, <span class="cl1">ISO 8583</span> messaging and chargeback workflows.
+        I like working with reliable services, clear rules and simple architecture;
+        complexity should earn its place.
+      </div>
+      <div class="t-p">cat engineering.txt</div>
+      <div class="t-o" data-i18n="about-phil">
+        A good system is usually quiet by default: clear interfaces, explicit data flow,
+        useful tests, observable failures and deployments that are easy to repeat.
+      </div>
+      <div class="t-p">ls skills/</div>
+      <div class="chips">
+        <span class="chip">distributed systems</span>
+        <span class="chip">payment processing</span>
+        <span class="chip">PostgreSQL</span>
+        <span class="chip">ISO 8583</span>
+        <span class="chip">clearing / settlement</span>
+        <span class="chip">idempotency</span>
+        <span class="chip">observability</span>
+        <span class="chip">reconciliation</span>
+        <span class="chip">cache strategies</span>
+        <span class="chip">event-driven</span>
+        <span class="chip">aws / cloud</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section id="projects">
+  <span class="sec-label" data-i18n="proj-cmd">ls -la work/</span>
+  <h2 class="sec-title" data-i18n="proj-title">backend work</h2>
+  <div class="proj-grid reveal">
+    <div class="proj">
+      <div class="proj-n">01</div>
+      <div class="proj-st live" data-i18n="proj-live">open source</div>
+      <div class="proj-name" data-i18n="p1-name">payment<br>simulator</div>
+      <div class="proj-desc" data-i18n="p1-desc">Distributed payment simulator in Go with RabbitMQ and PostgreSQL. It models payment processing with a double-entry ledger, resilient workers, exponential backoff and ACID transactions, focusing on consistency and operational clarity.</div>
+      <div class="tags"><span class="tag">Go</span><span class="tag">RabbitMQ</span><span class="tag">PostgreSQL</span><span class="tag">Docker</span></div>
+      <div class="plinks">
+        <a href="https://github.com/MatheusJulioSantana/payment-simulator" target="_blank" rel="noopener noreferrer" class="plink">github</a>
+      </div>
+    </div>
+    <div class="proj">
+      <div class="proj-n">02</div>
+      <div class="proj-st live" data-i18n="proj-live">open source</div>
+      <div class="proj-name" data-i18n="p2-name">green-stack<br>monitor</div>
+      <div class="proj-desc" data-i18n="p2-desc">Go middleware that estimates API carbon cost with configurable sampling, async workers, OTEL/Prometheus metrics and optional SVG badges. Built as a focused library and used by this portfolio as a small live integration.</div>
+      <div class="tags"><span class="tag">Go</span><span class="tag">OTEL</span><span class="tag">Prometheus</span><span class="tag eco">open source</span></div>
+      <div class="plinks">
+        <a href="https://github.com/MatheusJulioSantana/green-stack-monitor" target="_blank" rel="noopener noreferrer" class="plink">github</a>
+        <a href="/eco" class="plink">eco ping</a>
+      </div>
+    </div>
+    <div class="proj">
+      <div class="proj-n">03</div>
+      <div class="proj-st active" data-i18n="proj-exp">professional experience</div>
+      <div class="proj-name" data-i18n="p3-name">financial<br>flows</div>
+      <div class="proj-desc" data-i18n="p3-desc">Worked on Go services for financial flows across acquiring and accounting domains, with focus on clearing, validation, reconciliation, settlement and traceability across the financial lifecycle.</div>
+      <div class="tags"><span class="tag">Go</span><span class="tag">PostgreSQL</span><span class="tag">Clearing</span><span class="tag">Accounting</span></div>
+      <div class="plinks"><a href="https://linkedin.com/in/matheusjuliosantana" target="_blank" rel="noopener noreferrer" class="plink">linkedin</a></div>
+    </div>
+    <div class="proj">
+      <div class="proj-n">04</div>
+      <div class="proj-st live" data-i18n="proj-live">open source</div>
+      <div class="proj-name" data-i18n="p4-name">eco-runtime<br>portfolio</div>
+      <div class="proj-desc" data-i18n="p4-desc">This portfolio served as a small Go backend application: in-memory cache, gzip, rate limiting, security headers, live metrics and a real integration with green-stack-monitor.</div>
+      <div class="tags"><span class="tag">Go</span><span class="tag">HTTP</span><span class="tag">metrics</span><span class="tag eco">low cost</span></div>
+      <div class="plinks"><a href="https://github.com/MatheusJulioSantana/eco" target="_blank" rel="noopener noreferrer" class="plink">source</a></div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section id="knowledge">
+  <span class="sec-label" data-i18n="know-cmd">man stack</span>
+  <h2 class="sec-title" data-i18n="know-title">stack & notes</h2>
+  <div class="reveal">
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="stack"     data-i18n="tab-stack">tech stack</button>
+      <button class="tab-btn"        data-tab="conceitos" data-i18n="tab-concepts">eco notes</button>
+      <button class="tab-btn"        data-tab="arch"      data-i18n="tab-arch">architecture</button>
+      <button class="tab-btn"        data-tab="refs"      data-i18n="tab-refs">references</button>
+    </div>
+    <div class="tab-panels">
+
+      <div class="tab-panel active" id="tab-stack">
+        <div class="stack-grid">
+          <div class="stk-col">
+            <div class="stk-cat">// backend</div>
+            <div class="si">Go <span class="lvl">primary</span></div>
+            <div class="si">Python <span class="lvl">scripts</span></div>
+            <div class="si">SQL <span class="lvl">data flows</span></div>
+          </div>
+          <div class="stk-col">
+            <div class="stk-cat">// data</div>
+            <div class="si">PostgreSQL</div>
+            <div class="si">RabbitMQ</div>
+            <div class="si">MySQL</div>
+            <div class="si">Redis</div>
+          </div>
+          <div class="stk-col">
+            <div class="stk-cat">// infra</div>
+            <div class="si">AWS</div>
+            <div class="si">Docker</div>
+            <div class="si">Kubernetes</div>
+          </div>
+          <div class="stk-col">
+            <div class="stk-cat">// tooling</div>
+            <div class="si">Cobra CLI</div>
+            <div class="si">Fiber / Gorm</div>
+            <div class="si">Migrate</div>
+          </div>
+          <div class="stk-col">
+            <div class="stk-cat">// frontend</div>
+            <div class="si">Vanilla JS</div>
+            <div class="si">HTML / CSS</div>
+            <div class="si">Responsive UI</div>
+          </div>
+          <div class="stk-col">
+            <div class="stk-cat">// payments</div>
+            <div class="si">ISO 8583</div>
+            <div class="si">Clearing</div>
+            <div class="si">Accounting</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-conceitos">
+        <div class="concepts-grid">
+          <div class="concept">
+            <div class="concept-icon">▒</div>
+            <div class="concept-title" data-i18n="c1-title">dark-first design</div>
+            <div class="concept-desc" data-i18n="c1-desc">OLED displays consume energy proportional to each pixel's brightness. a dark background literally turns those pixels off. this portfolio uses <code style="color:var(--lcd-1)">#181c18</code> as its base background.</div>
+            <div class="concept-stat" data-i18n="c1-stat">dark pixels on OLED = ~0W consumption per subpixel</div>
+            <div class="concept-src"><a href="#tab-refs" onclick="openTab('refs')" data-i18n="c1-src">source: see references → OLED power</a></div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">◐</div>
+            <div class="concept-title" data-i18n="c2-title">desaturated colors</div>
+            <div class="concept-desc" data-i18n="c2-desc">warm, desaturated palettes help keep average luminance low. here the aesthetic tries to serve readability and efficiency without visual excess.</div>
+            <div class="concept-stat" data-i18n="c2-stat">warm muted has lower average luminance than neon</div>
+            <div class="concept-src"><a href="#tab-refs" onclick="openTab('refs')" data-i18n="c-src">source: see references</a></div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">⊞</div>
+            <div class="concept-title" data-i18n="c3-title">cache-first backend</div>
+            <div class="concept-desc" data-i18n="c3-desc">each avoided request means less CPU, fewer allocations and less network transfer. cache is a simple choice when data can be reused safely.</div>
+            <div class="concept-stat" data-i18n="c3-stat">avoided req ≈ 0.0001g CO₂ not emitted (est.)</div>
+            <div class="concept-src"><a href="#tab-refs" onclick="openTab('refs')" data-i18n="c-src">source: see references</a></div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">∅</div>
+            <div class="concept-title" data-i18n="c4-title">zero js framework</div>
+            <div class="concept-desc" data-i18n="c4-desc">React, Vue and Angular require the browser to download, parse and execute hundreds of KB before rendering anything. this site uses Vanilla JS by choice: no framework, no unnecessary overhead.</div>
+            <div class="concept-stat" data-i18n="c4-stat">bundle: 0KB framework · measured TTI &lt; 300ms</div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">⇲</div>
+            <div class="concept-title" data-i18n="c5-title">server-side rendering</div>
+            <div class="concept-desc" data-i18n="c5-desc">rendering on the server and serving ready HTML moves the work to optimized hardware, away from the user's device battery.</div>
+            <div class="concept-stat" data-i18n="c5-stat">heavy work on the server · lightness on the client</div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">↯</div>
+            <div class="concept-title" data-i18n="c6-title">prefers-reduced-motion</div>
+            <div class="concept-desc" data-i18n="c6-desc">this site respects the OS preference for reduced motion. when active, all transitions are removed: less CPU, less GPU, and a better experience for those who need it.</div>
+            <div class="concept-stat" data-i18n="c6-stat">implemented via @media(prefers-reduced-motion)</div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">⊕</div>
+            <div class="concept-title" data-i18n="c7-title">gzip compression</div>
+            <div class="concept-desc" data-i18n="c7-desc">gzip compresses HTML and JSON by 70-85%. implemented in the Go backend via stdlib. brotli is possible through a CDN, but depends on infrastructure configuration.</div>
+            <div class="concept-stat" data-i18n="c7-stat">gzip at origin · brotli possible via CDN, not guaranteed</div>
+            <div class="concept-src"><a href="#tab-refs" onclick="openTab('refs')" data-i18n="c-src">source: see references</a></div>
+          </div>
+          <div class="concept">
+            <div class="concept-icon">◈</div>
+            <div class="concept-title" data-i18n="c8-title">right-sized infra</div>
+            <div class="concept-desc" data-i18n="c8-desc">single process before cluster. local cache before an external service. each layer needs to justify its own cost.</div>
+            <div class="concept-stat" data-i18n="c8-stat">minimal infra = lower cost and lower impact</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-arch">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+          <div>
+            <div style="font-size:9px;color:var(--dim-text);letter-spacing:.2em;margin-bottom:.75rem">// request lifecycle</div>
+            <div class="arch-code">
+              <span class="ln">01</span> request reaches the Fly.io edge<br>
+              <span class="ln">02</span> check in-memory cache<br>
+              <span class="lg">   └─ HIT → returns (~18ms)</span><br>
+              <span class="ln">03</span> MISS → Go handler runs<br>
+              <span class="ln">04</span> response stored in cache (TTL)<br>
+              <span class="ln">05</span> response compressed (gzip)<br>
+              <span class="ln">06</span> metrics → prometheus<br>
+              <span class="ln">07</span> <span class="lk">returns to client</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--dim-text);letter-spacing:.2em;margin-bottom:.75rem">// choices and trade-offs</div>
+            <div class="arch-code">
+              <span class="lg">✓</span> Go — small runtime, low idle use<br>
+              <span class="lg">✓</span> in-memory cache — no Redis required<br>
+              <span class="lg">✓</span> gzip via Go stdlib<br>
+              <span class="lg">✓</span> token bucket rate limiter<br>
+              <span class="lg">✓</span> vanilla JS — zero app framework<br>
+              <span class="lr">✗</span> no heavy ORM<br>
+              <span class="lr">✗</span> no Kubernetes for a personal site
+            </div>
+          </div>
+          <div style="grid-column:1/-1">
+            <div style="font-size:9px;color:var(--dim-text);letter-spacing:.2em;margin-bottom:.75rem">// carbon awareness</div>
+            <div class="arch-code" style="font-size:12px;line-height:2">
+              the backend can call <a href="https://electricitymap.org" target="_blank" rel="noopener noreferrer" style="color:var(--lcd-2);text-decoration:none;border-bottom:1px solid var(--lcd-3)">electricitymap.org</a> to expose current carbon intensity for the BR-CS grid.<br>
+              values are cached for 1 hour because grid carbon intensity does not need per-request refreshes.<br>
+              <span class="lg">exposed through /api/metrics → carbon_intensity_gco2kwh</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-refs">
+        <div class="refs-list">
+          <div class="ref-item">
+            <div class="ref-source">HTTPArchive · Web Almanac 2024</div>
+            <div class="ref-desc">baseline for page weight and request count. 2024 desktop median: ~2.6MB and ~67 requests per page.</div>
+            <a href="https://almanac.httparchive.org/en/2024" target="_blank" rel="noopener noreferrer" class="ref-link">almanac.httparchive.org/en/2024 ↗</a>
+          </div>
+          <div class="ref-item">
+            <div class="ref-source">websitecarbon.com · calculation methodology</div>
+            <div class="ref-desc">model used to estimate CO2 per visit from data transfer, carbon intensity and device mix. the 0.04g value is derived from this model and page weight.</div>
+            <a href="https://www.websitecarbon.com/how-does-it-work/" target="_blank" rel="noopener noreferrer" class="ref-link">websitecarbon.com/how-does-it-work ↗</a>
+          </div>
+          <div class="ref-item">
+            <div class="ref-source">sustainablewebdesign.org · Sustainable Web Design Model</div>
+            <div class="ref-desc">reference model for estimating emissions from digital systems, including cache-related savings.</div>
+            <a href="https://sustainablewebdesign.org/calculating-digital-emissions/" target="_blank" rel="noopener noreferrer" class="ref-link">sustainablewebdesign.org ↗</a>
+          </div>
+          <div class="ref-item">
+            <div class="ref-source">Google · OLED display power consumption study (2021)</div>
+            <div class="ref-desc">Android team study showing that dark OLED pixels consume near-zero watts. dark mode reduced battery use by 14-60%, depending on brightness.</div>
+            <a href="https://dl.acm.org/doi/10.1145/3458864.3467682" target="_blank" rel="noopener noreferrer" class="ref-link">dl.acm.org · OLED energy study ↗</a>
+          </div>
+          <div class="ref-item">
+            <div class="ref-source">web.dev · Brotli compression</div>
+            <div class="ref-desc">brotli is typically 15-25% smaller than gzip for HTML, CSS and JS, with broad modern browser support.</div>
+            <a href="https://web.dev/codelab-text-compression-brotli" target="_blank" rel="noopener noreferrer" class="ref-link">web.dev/codelab-text-compression-brotli ↗</a>
+          </div>
+        </div>
+        <div class="ref-note" style="margin-top:2rem">
+          <span style="color:var(--lcd-2)">note on estimates:</span>
+          values marked with "est." are derived, not directly measured.
+          CO2 per cache hit, energy savings and market comparisons are approximations
+          based on the methodologies above. they are scale references, not an audit.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="eco">
+  <span class="sec-label" data-i18n="eco-cmd">./eco-report --full</span>
+  <h2 class="sec-title" data-i18n="eco-title">eco report</h2>
+
+  <div class="dex-grid reveal">
+    <div class="dex-card">
+      <div class="dex-label" data-i18n="dex1-lbl">page weight</div>
+      <div class="dex-val">79</div>
+      <div class="dex-sub">KB total</div>
+      <div class="dex-badge a">lean</div>
+    </div>
+    <div class="dex-card">
+      <div class="dex-label" data-i18n="dex2-lbl">js bundle</div>
+      <div class="dex-val">0</div>
+      <div class="dex-sub">KB framework</div>
+      <div class="dex-badge a">zero</div>
+    </div>
+    <div class="dex-card">
+      <div class="dex-label" data-i18n="dex3-lbl">co₂ / visit</div>
+      <div class="dex-val">0.04</div>
+      <div class="dex-sub" data-i18n="dex3-sub">grams · est.</div>
+      <div class="dex-badge a">low</div>
+    </div>
+    <div class="dex-card">
+      <div class="dex-label" data-i18n="dex4-lbl">http requests</div>
+      <div class="dex-val">6</div>
+      <div class="dex-sub" data-i18n="dex4-sub">total</div>
+      <div class="dex-badge a">lean</div>
+    </div>
+    <div class="dex-card">
+      <div class="dex-label" data-i18n="dex5-lbl">time to interact</div>
+      <div class="dex-val">&lt;0.3</div>
+      <div class="dex-sub" data-i18n="dex5-sub">seconds</div>
+      <div class="dex-badge a">fast</div>
+    </div>
+    <div class="dex-card">
+      <div class="dex-label" data-i18n="dex6-lbl">power draw</div>
+      <div class="dex-val">LOW</div>
+      <div class="dex-sub" data-i18n="dex6-sub">estimated</div>
+      <div class="dex-badge a">eco</div>
+    </div>
+  </div>
+
+  <div class="eco-layout reveal">
+    <div>
+      <div class="panel" style="margin-bottom:1.5rem">
+        <div class="panel-hdr"><span class="panel-sq"></span><span data-i18n="eco-compare">this portfolio vs market median <span style="color:var(--lcd-3)">[1]</span></span></div>
+        <div class="panel-body">
+          <div class="eco-row"><span class="eco-k" data-i18n="eco-r1">total transferred</span><span><span class="eco-bad">2.6MB</span> → <span class="eco-gd">79KB</span><span class="eco-ref" title="source: HTTPArchive Web Almanac 2024">[1]</span></span></div>
+          <div class="eco-row"><span class="eco-k" data-i18n="eco-r2">http requests</span><span><span class="eco-bad">~67 req</span> → <span class="eco-gd">6 req</span><span class="eco-ref" title="source: HTTPArchive Web Almanac 2024">[1]</span></span></div>
+          <div class="eco-row"><span class="eco-k" data-i18n="eco-r3">javascript bundle</span><span><span class="eco-bad">~500KB</span> → <span class="eco-gd">0KB</span></span></div>
+          <div class="eco-row"><span class="eco-k" data-i18n="eco-r4">co₂ per visit est.</span><span><span class="eco-bad">~0.5g</span> → <span class="eco-gd">0.04g</span><span class="eco-ref" title="source: websitecarbon.com methodology">[2]</span></span></div>
+          <div class="eco-row"><span class="eco-k" data-i18n="eco-r5">annual energy est.</span><span class="eco-gd">~0.4 kWh/year<span class="eco-ref" title="source: sustainablewebdesign.org">[3]</span></span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-hdr"><span class="panel-sq"></span><span data-i18n="eco-eff">efficiency per layer</span></div>
+        <div class="panel-body">
+          <div class="eco-row" style="padding:.2rem 0"><span class="eco-k" data-i18n="eco-cache">cache hit rate</span><span class="eco-gd" id="eco-cache-val">—</span></div>
+          <div class="pxbar-full" id="pb-cache">░░░░░░░░░░</div>
+          <div style="height:.75rem"></div>
+          <div class="eco-row" style="padding:.2rem 0"><span class="eco-k">gzip compression <span style="color:var(--dim-text);font-size:9px">(config)</span></span><span class="eco-gd">~80%<span class="eco-ref" title="source: web.dev compression">[5]</span></span></div>
+          <div class="pxbar-full" id="pb-brotli">░░░░░░░░░░</div>
+          <div style="height:.75rem"></div>
+          <div class="eco-row" style="padding:.2rem 0"><span class="eco-k" data-i18n="eco-cdn">cdn offload</span><span style="color:var(--dim-text);font-size:9px" data-i18n="eco-plan">not configured</span></div>
+        </div>
+      </div>
+      <div class="notes-card">
+        <span style="color:var(--lcd-2)" data-i18n="eco-note-lbl">notes:</span>
+        <span data-i18n="eco-note"> "market standard" values are medians from the </span>
+        <a href="https://almanac.httparchive.org/en/2024" target="_blank" rel="noopener noreferrer">HTTPArchive Web Almanac 2024</a>.
+        <span data-i18n="eco-note2"> CO₂ calculated via </span>
+        <a href="https://sustainablewebdesign.org" target="_blank" rel="noopener noreferrer">Sustainable Web Design Model</a>.
+        <span data-i18n="eco-note3"> estimates marked as "est." — see </span>
+        <a href="#tab-refs" onclick="openTab('refs');document.getElementById('knowledge').scrollIntoView()">full references</a>.
+      </div>
+    </div>
+
+    <div>
+      <div class="panel" style="margin-bottom:1.5rem;text-align:center;padding:2rem">
+        <div style="font-size:9px;color:var(--dim-text);letter-spacing:.2em;margin-bottom:.5rem" data-i18n="eco-saved">requests avoided by cache</div>
+        <div style="font-family:var(--pixel);font-size:5rem;color:var(--lcd-1);line-height:1" id="eco-req">0</div>
+        <div style="font-size:9px;color:var(--dim-text);margin-top:.4rem" data-i18n="eco-session">total this session</div>
+      </div>
+      <div class="manifesto">
+        <div class="manifesto-title" data-i18n="manifesto-title">how I like to work</div>
+        <div class="m-line"><span class="m-n">01</span><span class="m-t" data-i18n="m1">cache before computing</span></div>
+        <div class="m-line"><span class="m-n">02</span><span class="m-t" data-i18n="m2">fewer requests, more efficiency</span></div>
+        <div class="m-line"><span class="m-n">03</span><span class="m-t" data-i18n="m3">observe before optimizing</span></div>
+        <div class="m-line"><span class="m-n">04</span><span class="m-t" data-i18n="m4">less abstraction, when possible</span></div>
+        <div class="m-line"><span class="m-n">05</span><span class="m-t" data-i18n="m5">lean infra is sustainable infra</span></div>
+        <div class="m-line"><span class="m-n">06</span><span class="m-t" data-i18n="m6">low brightness is a technical choice too</span></div>
+        <div class="m-line"><span class="m-n">07</span><span class="m-t" data-i18n="m7">keep it simple until complexity earns its place</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<section id="contact">
+  <span class="sec-label" data-i18n="ct-cmd">./contact --init</span>
+  <h2 class="sec-title" data-i18n="ct-title">contact</h2>
+  <div class="ct-win reveal">
+    <div class="ct-hdr">
+      <span data-i18n="ct-channels">available channels</span>
+      <span style="color:var(--lcd-2)">● online</span>
+    </div>
+    <div class="ct-body">
+      <a href="mailto:matheusjsant@gmail.com" class="ct-link">
+        <span class="ct-key">--email</span><span class="ct-val">matheusjsant@gmail.com</span><span class="ct-arr">→</span>
+      </a>
+      <a href="https://github.com/MatheusJulioSantana" class="ct-link" target="_blank" rel="noopener noreferrer">
+        <span class="ct-key">--github</span><span class="ct-val">github.com/MatheusJulioSantana</span><span class="ct-arr">→</span>
+      </a>
+      <a href="https://linkedin.com/in/matheusjuliosantana" class="ct-link" target="_blank" rel="noopener noreferrer">
+        <span class="ct-key">--linkedin</span><span class="ct-val">linkedin.com/in/matheusjuliosantana</span><span class="ct-arr">→</span>
+      </a>
+      <a href="/eco" class="ct-link" id="eco-ping-link" target="_blank" rel="noopener noreferrer">
+        <span class="ct-key">--eco-ping</span><span class="ct-val" style="font-style:italic" id="eco-ping-val">curl /eco</span><span class="ct-arr">→</span>
+      </a>
+    </div>
+    <div class="ct-repl">
+      <span style="color:var(--dim-text);font-size:11px">root@eco:~$</span>
+      <input type="text" class="ct-in" id="repl" placeholder="type help" autocomplete="off">
+      <span class="cursor" style="width:.45em;height:.9em"></span>
+    </div>
+    <div id="repl-out"></div>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 — Matheus Julio — eco-runtime · warm compute</span>
+  <span>79KB · 6 req · 0.04g CO₂ est. · ☀ low impact web</span>
+  <a href="https://github.com/MatheusJulioSantana/eco" target="_blank" rel="noopener noreferrer">[view source]</a>
+</footer>
+
+<script>
+const translations = {
+  pt: {
+    'nav-about':'sobre','nav-projects':'trabalho','nav-concepts':'stack',
+    'nav-eco':'eco report','nav-contact':'contato',
+    'battery-btn':'[ battery saver ]','sys-status':'sistemas ok',
+    'hero-est':'est.','hero-tagline':'Backend Engineer — Go, pagamentos e serviços confiáveis',
+    'hero-sub':'2+ anos · adquirência · liquidação · ISO 8583 · sistemas orientados a eventos',
+    'btn-projects':'ver trabalho','btn-concepts':'stack','btn-eco':'eco report',
+    'met-title':'system · observatory · backend metrics',
+    'met-static':'modo estático — conecte o backend para dados ao vivo',
+    'met0-unit':'in-memory · hits / total req','met1-unit':'ms · sliding 100 req',
+    'met2-lbl':'salvas · hoje','met2-unit':'cache hits · esta sessão',
+    'met3-unit':'g · green-stack-monitor','met4-unit':'horas online · esta sessão',
+    'about-cmd':'cat summary.txt','about-title':'resumo',
+    'about-who':'Backend Engineer com 2+ anos de experiência profissional trabalhando em <span class="cl1">sistemas financeiros</span> com Go, PostgreSQL e ferramentas cloud-native. Contribuí com fluxos de autorização de adquirência, liquidação, clearing, conciliação, mensageria <span class="cl1">ISO 8583</span> e chargeback. Gosto de trabalhar com serviços confiáveis, regras claras e arquitetura simples; complexidade só quando ela se prova necessária.',
+    'about-phil':'Um bom sistema costuma ser silencioso por padrão: interfaces claras, fluxo de dados explícito, testes úteis, falhas observáveis e deploys fáceis de repetir.',
+    'proj-cmd':'ls -la work/','proj-title':'trabalho backend','proj-live':'open source',
+    'proj-exp':'experiência profissional','proj-freelance':'freelance',
+    'p1-name':'payment<br>simulator','p2-name':'green-stack<br>monitor',
+    'p3-name':'financial<br>flows','p4-name':'eco-runtime<br>portfolio',
+    'p1-desc':'Simulador distribuído de pagamentos em Go com RabbitMQ e PostgreSQL. Modela processamento financeiro com ledger de dupla entrada, workers resilientes, exponential backoff e transações ACID, com foco em consistência e clareza operacional.',
+    'p2-desc':'Middleware Go que estima custo de carbono de APIs com sampling configurável, workers assíncronos, métricas OTEL/Prometheus e badges SVG opcionais. Foi construído como uma lib focada e usado neste portfólio como uma pequena integração real.',
+    'p3-desc':'Atuação em serviços Go para fluxos financeiros de adquirência e contabilização, com foco em clearing, validação, conciliação, liquidação e rastreabilidade ao longo do ciclo financeiro.',
+    'p4-desc':'Este portfólio servido como uma pequena aplicação backend em Go: cache em memória, gzip, rate limiting, headers de segurança, métricas ao vivo e integração real com green-stack-monitor.',
+    'know-cmd':'man stack','know-title':'stack & notas',
+    'tab-stack':'stack técnica','tab-concepts':'conceitos eco',
+    'tab-arch':'arquitetura','tab-refs':'referências',
+    'c1-title':'dark-first design','c2-title':'cores dessaturadas',
+    'c3-title':'cache-first backend','c4-title':'zero js framework',
+    'c5-title':'server-side rendering','c6-title':'prefers-reduced-motion',
+    'c7-title':'compressão gzip','c8-title':'right-sizing de infra',
+    'c1-desc':'displays OLED consomem energia proporcional ao brilho de cada pixel. um fundo escuro literalmente apaga esses pixels. este portfólio usa <code style="color:var(--lcd-1)">#181c18</code> como fundo base.',
+    'c1-stat':'pixels escuros em OLED = ~0W de consumo por subpixel',
+    'c1-src':'fonte: ver referências → OLED power',
+    'c-src':'fonte: ver referências',
+    'c2-desc':'paletas warm e dessaturadas ajudam a manter a luminância média baixa. aqui a estética tenta servir a leitura e a eficiência, sem excesso visual.',
+    'c2-stat':'warm muted tem luminância média mais baixa que neon',
+    'c3-desc':'cada request evitada é menos CPU, menos alocação e menos tráfego. cache é uma escolha simples quando o dado pode ser reutilizado com segurança.',
+    'c3-stat':'req. evitada ≈ 0.0001g CO₂ não emitido (est.)',
+    'c4-desc':'React, Vue, Angular exigem que o navegador baixe, parse e execute centenas de KB antes de mostrar qualquer coisa. este site usa Vanilla JS por escolha — sem framework, sem overhead desnecessário.',
+    'c4-stat':'bundle: 0KB de framework · TTI medido < 300ms',
+    'c5-desc':'renderizar no servidor e servir HTML pronto move o trabalho para hardware otimizado, longe da bateria do device do usuário.',
+    'c5-stat':'trabalho pesado no servidor · leveza no cliente',
+    'c6-desc':'este site respeita a preferência do sistema operacional por menos animações. quando ativa, todas as transições são removidas — menos CPU e melhor experiência.',
+    'c6-stat':'implementado via @media(prefers-reduced-motion)',
+    'c7-desc':'gzip comprime HTML e JSON em 70–85%. implementado no backend Go via stdlib — sem dependências externas. brotli é possível via Cloudflare proxy, mas depende de configuração de infra.',
+    'c7-stat':'gzip no origin · brotli possível via CDN, não garantido',
+    'c8-desc':'processo único antes de cluster. cache local antes de serviço externo. cada camada precisa pagar seu próprio custo.',
+    'c8-stat':'infra mínima = custo menor e impacto menor',
+    'eco-cmd':'./eco-report --full','eco-title':'eco report',
+    'dex1-lbl':'peso da página','dex2-lbl':'bundle js','dex3-lbl':'co₂ / visita',
+    'dex3-sub':'gramas · est.','dex4-lbl':'requests http','dex4-sub':'total',
+    'dex5-lbl':'tempo interativo','dex5-sub':'segundos','dex6-lbl':'consumo','dex6-sub':'estimado',
+    'eco-compare':'este portfólio vs mediana de mercado <span style="color:var(--lcd-3)">[1]</span>',
+    'eco-r1':'total transferido','eco-r2':'http requests','eco-r3':'javascript bundle',
+    'eco-r4':'co₂ por visita est.','eco-r5':'energia anual est.',
+    'eco-eff':'eficiência por camada','eco-cache':'cache hit rate',
+    'eco-cdn':'cdn offload','eco-plan':'não configurado',
+    'eco-note-lbl':'notas:',
+    'eco-note':' valores de "padrão de mercado" são medianas do ',
+    'eco-note2':' CO₂ calculado via ',
+    'eco-note3':' estimativas marcadas como "est." — ver ',
+    'eco-saved':'requests evitadas por cache','eco-session':'total desta sessão',
+    'manifesto-title':'como gosto de trabalhar',
+    'm1':'cache antes de computar','m2':'menos requests, mais eficiência',
+    'm3':'observar antes de otimizar','m4':'menos abstração, quando possível',
+    'm5':'infra enxuta é infra sustentável','m6':'baixo brilho também é escolha técnica',
+    'm7':'manter simples até a complexidade se provar necessária',
+    'ct-cmd':'./contact --init','ct-title':'contato','ct-channels':'canais disponíveis',
+  },
+  en: {
+    'nav-about':'about','nav-projects':'work','nav-concepts':'stack',
+    'nav-eco':'eco report','nav-contact':'contact',
+    'battery-btn':'[ battery saver ]','sys-status':'systems healthy',
+    'hero-est':'est.','hero-tagline':'Backend Engineer — Go, payments and reliable services',
+    'hero-sub':'2+ years · acquiring · settlement · ISO 8583 · event-driven systems',
+    'btn-projects':'see work','btn-concepts':'stack','btn-eco':'eco report',
+    'met-title':'system · observatory · backend metrics',
+    'met-static':'static mode — connect backend for live data',
+    'met0-unit':'in-memory · hits / total req','met1-unit':'ms · sliding 100 req',
+    'met2-lbl':'saved · today','met2-unit':'cache hits · this session',
+    'met3-unit':'g · green-stack-monitor','met4-unit':'hours online · this session',
+    'about-cmd':'cat summary.txt','about-title':'summary',
+    'about-who':'Backend Engineer with 2+ years of professional experience working on <span class="cl1">financial systems</span> with Go, PostgreSQL and cloud-native tools. I have contributed to acquiring transaction authorization, settlement, clearing, reconciliation, <span class="cl1">ISO 8583</span> messaging and chargeback workflows. I like working with reliable services, clear rules and simple architecture; complexity should earn its place.',
+    'about-phil':'A good system is usually quiet by default: clear interfaces, explicit data flow, useful tests, observable failures and deployments that are easy to repeat.',
+    'proj-cmd':'ls -la work/','proj-title':'backend work','proj-live':'open source',
+    'proj-exp':'professional experience','proj-freelance':'freelance',
+    'p1-name':'payment<br>simulator','p2-name':'green-stack<br>monitor',
+    'p3-name':'financial<br>flows','p4-name':'eco-runtime<br>portfolio',
+    'p1-desc':'Distributed payment simulator in Go with RabbitMQ and PostgreSQL. It models payment processing with a double-entry ledger, resilient workers, exponential backoff and ACID transactions, focusing on consistency and operational clarity.',
+    'p2-desc':'Go middleware that estimates API carbon cost with configurable sampling, async workers, OTEL/Prometheus metrics and optional SVG badges. Built as a focused library and used by this portfolio as a small live integration.',
+    'p3-desc':'Worked on Go services for financial flows across acquiring and accounting domains, with focus on clearing, validation, reconciliation, settlement and traceability across the financial lifecycle.',
+    'p4-desc':'This portfolio served as a small Go backend application: in-memory cache, gzip, rate limiting, security headers, live metrics and a real integration with green-stack-monitor.',
+    'know-cmd':'man stack','know-title':'stack & notes',
+    'tab-stack':'tech stack','tab-concepts':'eco concepts',
+    'tab-arch':'architecture','tab-refs':'references',
+    'c1-title':'dark-first design','c2-title':'desaturated colors',
+    'c3-title':'cache-first backend','c4-title':'zero js framework',
+    'c5-title':'server-side rendering','c6-title':'prefers-reduced-motion',
+    'c7-title':'gzip compression','c8-title':'right-sizing infra',
+    'c1-desc':'OLED displays consume energy proportional to each pixel\'s brightness. a dark background literally turns those pixels off. this portfolio uses <code style="color:var(--lcd-1)">#181c18</code> as its base background.',
+    'c1-stat':'dark pixels on OLED = ~0W consumption per subpixel',
+    'c1-src':'source: see references → OLED power',
+    'c-src':'source: see references',
+    'c2-desc':'warm, desaturated palettes help keep average luminance low. here the aesthetic tries to serve readability and efficiency without visual excess.',
+    'c2-stat':'warm muted has lower average luminance than neon',
+    'c3-desc':'each avoided request means less CPU, fewer allocations and less network transfer. cache is a simple choice when data can be reused safely.',
+    'c3-stat':'avoided req ≈ 0.0001g CO₂ not emitted (est.)',
+    'c4-desc':'React, Vue, Angular require the browser to download, parse and execute hundreds of KB before rendering anything. this site uses Vanilla JS by choice — no framework, no unnecessary overhead.',
+    'c4-stat':'bundle: 0KB framework · measured TTI < 300ms',
+    'c5-desc':'rendering on the server and serving ready HTML moves the work to optimized hardware, away from the user\'s device battery.',
+    'c5-stat':'heavy work on the server · lightness on the client',
+    'c6-desc':'this site respects the OS preference for reduced motion. when active, all transitions are removed — less CPU, less GPU, and a better experience for those who need it.',
+    'c6-stat':'implemented via @media(prefers-reduced-motion)',
+    'c7-desc':'gzip compresses HTML and JSON by 70–85%. implemented in the Go backend via stdlib — no external dependencies. brotli is possible via Cloudflare proxy, but depends on infra configuration.',
+    'c7-stat':'gzip at origin · brotli possible via CDN, not guaranteed',
+    'c8-desc':'single process before cluster. local cache before an external service. each layer needs to justify its own cost.',
+    'c8-stat':'minimal infra = lower cost and lower impact',
+    'eco-cmd':'./eco-report --full','eco-title':'eco report',
+    'dex1-lbl':'page weight','dex2-lbl':'js bundle','dex3-lbl':'co₂ / visit',
+    'dex3-sub':'grams · est.','dex4-lbl':'http requests','dex4-sub':'total',
+    'dex5-lbl':'time to interact','dex5-sub':'seconds','dex6-lbl':'power draw','dex6-sub':'estimated',
+    'eco-compare':'this portfolio vs market median <span style="color:var(--lcd-3)">[1]</span>',
+    'eco-r1':'total transferred','eco-r2':'http requests','eco-r3':'javascript bundle',
+    'eco-r4':'co₂ per visit est.','eco-r5':'annual energy est.',
+    'eco-eff':'efficiency per layer','eco-cache':'cache hit rate',
+    'eco-cdn':'cdn offload','eco-plan':'not configured',
+    'eco-note-lbl':'notes:',
+    'eco-note':' "market standard" values are medians from the ',
+    'eco-note2':' CO₂ calculated via ',
+    'eco-note3':' estimates marked as "est." — see ',
+    'eco-saved':'requests avoided by cache','eco-session':'total this session',
+    'manifesto-title':'how I like to work',
+    'm1':'cache before computing','m2':'fewer requests, more efficiency',
+    'm3':'observe before optimizing','m4':'less abstraction, when possible',
+    'm5':'lean infra is sustainable infra','m6':'low brightness is a technical choice too',
+    'm7':'keep it simple until complexity earns its place',
+    'ct-cmd':'./contact --init','ct-title':'contact','ct-channels':'available channels',
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'en';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  document.getElementById('lang-pt').classList.toggle('lang-active', lang === 'pt');
+  document.getElementById('lang-en').classList.toggle('lang-active', lang === 'en');
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if(translations[lang][key] !== undefined) {
+      el.innerHTML = translations[lang][key];
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => setLang(currentLang));
+
+const boots = [
+  {t:'eco-runtime v2.1',      c:'bl-dim', d:0},
+  {t:'. . . . . . . .',       c:'bl-dim', d:250},
+  {t:'cache layer     ok',    c:'bl-ok',  d:480},
+  {t:'compression     ok',    c:'bl-ok',  d:640},
+  {t:'low-js mode     ok',    c:'bl-ok',  d:800},
+  {t:'eco metrics     ok',    c:'bl-ok',  d:960},
+  {t:'. . . . . . . .',       c:'bl-dim', d:1100},
+  {t:'ready.',                c:'bl-rdy', d:1320},
+];
+const bootEl = document.getElementById('boot');
+boots.forEach(({t,c,d}) => {
+  setTimeout(() => {
+    const l = document.createElement('span');
+    l.className = `bl ${c}`;
+    l.textContent = t;
+    bootEl.appendChild(l);
+    requestAnimationFrame(() => requestAnimationFrame(() => l.classList.add('show')));
+  }, d + 100);
+});
+setTimeout(() => {
+  ['hn','hr','ht','hs','hcta'].forEach(id => {
+    document.getElementById(id).style.opacity = '1';
+  });
+}, 1950);
+
+function pxBar(el, pct, total=10) {
+  if(!el) return;
+  const n = Math.round((pct/100)*total);
+  el.textContent = '█'.repeat(n) + '░'.repeat(total-n) + ' ' + pct + '%';
+}
+
+const API_BASE = '';
+
+async function fetchMetrics() {
+  try {
+    const r = await fetch(`${API_BASE}/api/metrics`,
+      {signal: AbortSignal.timeout(2000)});
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d = await r.json();
+    document.getElementById('sys-text').style.color = '';
+    document.getElementById('sys-text').textContent =
+      currentLang === 'pt' ? 'backend ao vivo' : 'backend live';
+    document.getElementById('met-mode').textContent =
+      currentLang === 'pt' ? 'ao vivo · backend conectado' : 'live · backend connected';
+    return d;
+  } catch {
+    document.getElementById('sys-text').textContent =
+      currentLang === 'pt' ? 'backend offline' : 'backend offline';
+    document.getElementById('sys-text').style.color = 'var(--warm)';
+    document.getElementById('met-mode').textContent =
+      currentLang === 'pt'
+        ? 'backend necessário · go run main.go'
+        : 'backend required · go run main.go';
+    return null;
+  }
+}
+
+function countUp(el, target, dur, dec=0, suf='') {
+  if(!el) return;
+  const s = performance.now();
+  (function f(now) {
+    const p = Math.min((now-s)/dur, 1);
+    const e = 1 - Math.pow(1-p, 3);
+    el.textContent = (dec ? (e*target).toFixed(dec) : Math.round(e*target)) + suf;
+    if(p < 1) requestAnimationFrame(f);
+  })(performance.now());
+}
+
+let metLoaded = false;
+const metObs = new IntersectionObserver(async entries => {
+  if(!entries[0].isIntersecting || metLoaded) return;
+  metLoaded = true;
+  metObs.disconnect();
+
+  const d = await fetchMetrics();
+
+  if(!d) return;
+
+  document.getElementById('mts').textContent =
+    new Date().toISOString().replace('T',' ').slice(0,19) + ' UTC';
+  countUp(document.getElementById('m0'), d.cache_hit_rate, 1800, 1, '%');
+  countUp(document.getElementById('m1'), d.p50_response_ms, 1400, 0, 'ms');
+  countUp(document.getElementById('m2'), d.cached_requests_today, 1700);
+  countUp(document.getElementById('m3'), d.co2_per_req_g * 1000, 2000, 4, 'mg');
+  countUp(document.getElementById('m4'), d.uptime_hours, 1500, 1, 'h');
+  setTimeout(() => {
+    pxBar(document.getElementById('pb0'), Math.min(100, Math.round(d.cache_hit_rate)));
+    pxBar(document.getElementById('pb1'), Math.min(100, Math.round(100 - d.p50_response_ms)));
+    pxBar(document.getElementById('pb2'), Math.min(100, Math.round(d.cached_requests_today / 20)));
+    const perReqG = d.co2_per_req_g || 0;
+    const barPct = perReqG < 0.001 ? 100 : perReqG < 0.01 ? 75 : perReqG < 0.1 ? 40 : 10;
+    pxBar(document.getElementById('pb3'), barPct);
+    pxBar(document.getElementById('pb4'), 99);
+  }, 1500);
+
+  setInterval(async () => {
+    const d2 = await fetchMetrics();
+    if(!d2) return;
+    document.getElementById('m0').textContent = d2.cache_hit_rate.toFixed(1)+'%';
+    document.getElementById('m1').textContent = Math.round(d2.p50_response_ms)+'ms';
+    document.getElementById('m2').textContent = d2.cached_requests_today;
+    document.getElementById('m3').textContent = (d2.co2_per_req_g * 1000).toFixed(4)+'mg';
+    document.getElementById('mts').textContent =
+      new Date().toISOString().replace('T',' ').slice(0,19)+' UTC';
+  }, 6000);
+}, {threshold:0.15});
+metObs.observe(document.getElementById('metrics'));
+
+const ecoObs = new IntersectionObserver(async entries => {
+  if(!entries[0].isIntersecting) return;
+  ecoObs.disconnect();
+
+  const d = await fetchMetrics();
+  const hitsTotal = d ? d.cache_hits : 0;
+  if(hitsTotal > 0) countUp(document.getElementById('eco-req'), hitsTotal, 2000);
+
+  setTimeout(() => {
+    if(d && d.cache_hit_rate > 0) {
+      const rate = Math.round(d.cache_hit_rate);
+      document.getElementById('eco-cache-val').textContent = rate + '%';
+      pxBar(document.getElementById('pb-cache'), rate);
+    }
+    pxBar(document.getElementById('pb-brotli'), 80);
+  }, 400);
+}, {threshold:0.15});
+ecoObs.observe(document.getElementById('eco'));
+
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('revealed'); revObs.unobserve(e.target); }
+  });
+}, {threshold:0.08, rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+function openTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  const btn = document.querySelector(`.tab-btn[data-tab="${name}"]`);
+  const panel = document.getElementById('tab-'+name);
+  if(btn) btn.classList.add('active');
+  if(panel) panel.classList.add('active');
+}
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => openTab(btn.dataset.tab));
+});
+
+const secObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting) {
+      document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+      const m = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if(m) m.classList.add('active');
+    }
+  });
+}, {threshold:0.35});
+document.querySelectorAll('section[id]').forEach(s => secObs.observe(s));
+
+document.getElementById('eco-toggle').addEventListener('click', () => {
+  document.body.classList.toggle('eco-mode');
+  const on = document.body.classList.contains('eco-mode');
+  document.getElementById('sys-text').textContent =
+    on ? (currentLang === 'pt' ? 'modo eco ativo' : 'eco mode active')
+       : translations[currentLang]['sys-status'];
+});
+
+const replEl = document.getElementById('repl');
+const replOut = document.getElementById('repl-out');
+const cmds = {
+  help:    () => currentLang === 'pt'
+    ? 'comandos: about, projects, eco, stack, github, backend, battery, refs, clear'
+    : 'commands: about, projects, eco, stack, github, backend, battery, refs, clear',
+  about:   () => currentLang === 'pt'
+    ? 'backend eng · payments · sistemas tranquilos '
+    : 'backend eng · payments · calm systems',
+  projects:() => currentLang === 'pt'
+    ? 'payment-simulator, green-stack-monitor, financial flows, eco-runtime portfolio'
+    : 'payment-simulator, green-stack-monitor, financial flows, eco-runtime portfolio',
+  eco:     () => '0.04g CO₂ est. · 79KB · 6 req · zero JS framework · ☀',
+  stack:   () => 'Go · PostgreSQL · RabbitMQ · MySQL · Redis · AWS · Docker · K8s · ISO 8583 · Accounting',
+  github:  () => 'github.com/MatheusJulioSantana',
+  backend: () => currentLang === 'pt'
+    ? 'go run main.go → métricas ficam ao vivo automaticamente'
+    : 'go run main.go → metrics become live automatically',
+  battery: () => currentLang === 'pt'
+    ? 'toggle: clique em [ battery saver ] no nav'
+    : 'toggle: click [ battery saver ] in the nav',
+  refs:    () => { openTab('refs'); document.getElementById('knowledge').scrollIntoView({behavior:'smooth'}); return currentLang === 'pt' ? '→ abrindo aba de referências' : '→ opening references tab'; },
+  clear:   () => { replOut.innerHTML=''; return null; },
+};
+replEl && replEl.addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const cmd = replEl.value.trim().toLowerCase();
+  replEl.value = '';
+  if(!cmd) return;
+  const fn = cmds[cmd];
+  const res = fn ? fn() : (currentLang === 'pt' ? `comando '${cmd}' não encontrado · tente: help` : `unknown command '${cmd}' · try: help`);
+  if(res === null) return;
+  const row = document.createElement('div');
+  row.style.cssText = 'border-bottom:1px solid var(--lcd-4);padding:.2rem 0;line-height:1.8';
+  const prompt = document.createElement('span');
+  prompt.style.color = 'var(--dim-text)';
+  prompt.textContent = `$ ${cmd}`;
+  const result = document.createElement('span');
+  result.style.color = 'var(--body-text)';
+  result.textContent = res;
+  row.append(prompt, document.createElement('br'), result);
+  replOut.appendChild(row);
+  replOut.parentElement.scrollTop = replOut.parentElement.scrollHeight;
+});
+
+(function() {
+  const host = window.location.host || 'localhost:8080';
+  const protocol = window.location.protocol === 'file:' ? 'http:' : window.location.protocol;
+  const link = document.getElementById('eco-ping-link');
+  const val  = document.getElementById('eco-ping-val');
+  if (link) link.href = `${protocol}//${host}/eco`;
+  if (val)  val.textContent = `curl ${host}/eco`;
+})();
+
+setInterval(() => {
+  const el = document.getElementById('mts');
+  if(el && el.textContent !== '—')
+    el.textContent = new Date().toISOString().replace('T',' ').slice(0,19)+' UTC';
+}, 1000);
+</script>
+</body>
+</html>
