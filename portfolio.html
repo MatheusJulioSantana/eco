@@ -311,7 +311,8 @@ section{padding:4.5rem 2rem}
 .ct-repl{display:flex;align-items:center;gap:.5rem;padding:1.1rem 1.25rem;border-top:1px solid var(--lcd-4)}
 .ct-in{background:transparent;border:none;outline:none;color:var(--lcd-1);font-family:var(--mono);font-size:12px;flex:1;caret-color:var(--lcd-1)}
 .ct-in::placeholder{color:var(--dim-text)}
-#repl-out{padding:0 1.25rem .75rem;font-size:11px;color:var(--lcd-2);line-height:2}
+#repl-out{padding:0 1.25rem .75rem;font-size:11px;color:var(--lcd-2);line-height:2;overflow-wrap:anywhere}
+.repl-result{white-space:pre-wrap;overflow-wrap:anywhere}
 
 footer{
   background:var(--bg);border-top:2px solid var(--lcd-4);
@@ -1225,10 +1226,45 @@ document.getElementById('eco-toggle').addEventListener('click', () => {
 
 const replEl = document.getElementById('repl');
 const replOut = document.getElementById('repl-out');
+
+async function fetchReplJSON(path) {
+  const started = performance.now();
+  const r = await fetch(`${API_BASE}${path}`, {
+    cache: 'no-store',
+    signal: AbortSignal.timeout(2500),
+  });
+  const elapsed = Math.round(performance.now() - started);
+  const text = await r.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    data = text;
+  }
+  if(!r.ok) throw new Error(`GET ${path} -> HTTP ${r.status} (${elapsed}ms)`);
+  return `GET ${path} -> ${r.status} (${elapsed}ms)\n${JSON.stringify(data, null, 2)}`;
+}
+
+function appendReplRow(cmd, res) {
+  if(res === null) return;
+  const row = document.createElement('div');
+  row.style.cssText = 'border-bottom:1px solid var(--lcd-4);padding:.2rem 0;line-height:1.8';
+  const prompt = document.createElement('span');
+  prompt.style.color = 'var(--dim-text)';
+  prompt.textContent = `$ ${cmd}`;
+  const result = document.createElement('span');
+  result.className = 'repl-result';
+  result.style.color = 'var(--body-text)';
+  result.textContent = res;
+  row.append(prompt, document.createElement('br'), result);
+  replOut.appendChild(row);
+  replOut.parentElement.scrollTop = replOut.parentElement.scrollHeight;
+}
+
 const cmds = {
   help:    () => currentLang === 'pt'
-    ? 'comandos: about, projects, eco, stack, github, backend, battery, refs, clear'
-    : 'commands: about, projects, eco, stack, github, backend, battery, refs, clear',
+    ? 'comandos: about, projects, eco, stack, github, backend, metrics, ping, battery, refs, clear'
+    : 'commands: about, projects, eco, stack, github, backend, metrics, ping, battery, refs, clear',
   about:   () => currentLang === 'pt'
     ? 'backend eng · payments · sistemas tranquilos '
     : 'backend eng · payments · calm systems',
@@ -1241,31 +1277,31 @@ const cmds = {
   backend: () => currentLang === 'pt'
     ? 'go run main.go → métricas ficam ao vivo automaticamente'
     : 'go run main.go → metrics become live automatically',
+  metrics: () => fetchReplJSON('/api/metrics'),
+  ping:    () => fetchReplJSON('/api/ping'),
   battery: () => currentLang === 'pt'
     ? 'toggle: clique em [ battery saver ] no nav'
     : 'toggle: click [ battery saver ] in the nav',
   refs:    () => { openTab('refs'); document.getElementById('knowledge').scrollIntoView({behavior:'smooth'}); return currentLang === 'pt' ? '→ abrindo aba de referências' : '→ opening references tab'; },
   clear:   () => { replOut.innerHTML=''; return null; },
 };
-replEl && replEl.addEventListener('keydown', e => {
+replEl && replEl.addEventListener('keydown', async e => {
   if(e.key !== 'Enter') return;
+  e.preventDefault();
   const cmd = replEl.value.trim().toLowerCase();
   replEl.value = '';
   if(!cmd) return;
   const fn = cmds[cmd];
-  const res = fn ? fn() : (currentLang === 'pt' ? `comando '${cmd}' não encontrado · tente: help` : `unknown command '${cmd}' · try: help`);
-  if(res === null) return;
-  const row = document.createElement('div');
-  row.style.cssText = 'border-bottom:1px solid var(--lcd-4);padding:.2rem 0;line-height:1.8';
-  const prompt = document.createElement('span');
-  prompt.style.color = 'var(--dim-text)';
-  prompt.textContent = `$ ${cmd}`;
-  const result = document.createElement('span');
-  result.style.color = 'var(--body-text)';
-  result.textContent = res;
-  row.append(prompt, document.createElement('br'), result);
-  replOut.appendChild(row);
-  replOut.parentElement.scrollTop = replOut.parentElement.scrollHeight;
+  try {
+    const res = fn
+      ? await fn()
+      : (currentLang === 'pt' ? `comando '${cmd}' não encontrado · tente: help` : `unknown command '${cmd}' · try: help`);
+    appendReplRow(cmd, res);
+  } catch(err) {
+    appendReplRow(cmd, currentLang === 'pt'
+      ? `falha ao executar '${cmd}': ${err.message}`
+      : `failed to run '${cmd}': ${err.message}`);
+  }
 });
 
 (function() {
