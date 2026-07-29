@@ -1291,7 +1291,14 @@ replEl && replEl.addEventListener('keydown', async e => {
   const cmd = replEl.value.trim().toLowerCase();
   replEl.value = '';
   if(!cmd) return;
-  const fn = cmds[cmd];
+  const aliases = {
+    'api/ping': 'ping',
+    '/api/ping': 'ping',
+    'api/metrics': 'metrics',
+    '/api/metrics': 'metrics',
+  };
+  const normalizedCmd = aliases[cmd] || cmd;
+  const fn = cmds[normalizedCmd];
   try {
     const res = fn
       ? await fn()
